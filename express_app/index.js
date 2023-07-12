@@ -1,10 +1,4 @@
-/*
-Contoh Dynamic Endpoint di ExpressJS
-- GET/{endpoint}
-- POST/{endpoint}
-- PUT/{endpoint}/{id}
-- DELETE/{endpoint}/{id}
-*/
+
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -31,6 +25,22 @@ app.get('/api/:endpoint', (req, res) => {
     res.json(data);
   } else {
     res.status(404).json({ error: 'Data not found' });
+  }
+});
+
+// GET api/{endpoint}/{id}
+app.get('/api/:endpoint/:id', (req, res) => {
+  const { endpoint, id } = req.params;
+  const data = getDataFromJson(endpoint);
+  if (data) {
+    const item = data.find(item => item.id == id);
+    if (item) {
+      res.json(item);
+    } else {
+      res.status(404).json({ error: 'Data not found' });
+    }
+  } else {
+    res.status(404).json({ error: 'Endpoint not found' });
   }
 });
 

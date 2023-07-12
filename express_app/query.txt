@@ -1,0 +1,8 @@
+/*
+Contoh Dynamic Endpoint di ExpressJS
+- GET/{endpoint}
+- GET/{endpoint}/{id}
+- POST/{endpoint}
+- PUT/{endpoint}/{id}
+- DELETE/{endpoint}/{id}
+*/
