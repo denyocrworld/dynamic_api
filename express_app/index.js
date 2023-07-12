@@ -97,6 +97,20 @@ app.delete('/api/:endpoint/:id', (req, res) => {
   }
 });
 
+// DELETE api/{endpoint}/action/delete-all
+app.delete('/api/:endpoint/action/delete-all', (req, res) => {
+  const { endpoint } = req.params;
+  const filePath = getDataFilePath(endpoint);
+
+  try {
+    fs.writeFileSync(filePath, '[]');
+    res.json({ message: 'All data deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete all data' });
+  }
+});
+
+
 function getDataFromJson(endpoint, page = 1, perPage = 10) {
   try {
     const filePath = getDataFilePath(endpoint);

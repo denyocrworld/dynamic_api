@@ -23,7 +23,7 @@ async function addData(endpoint, data) {
     try {
         const response = await axios.post(`http://localhost:3000/api/${endpoint}`, data);
         console.log('POST Response:', response.data);
-        return response.data;
+        return response;
     } catch (error) {
         console.error('POST Error:', error.response.data);
     }
@@ -49,33 +49,45 @@ async function deleteData(endpoint, id) {
     }
 }
 
+
+async function deleteAllData(endpoint) {
+    try {
+        const response = await axios.delete(`http://localhost:3000/api/${endpoint}/action/delete-all`);
+        console.log('DELETE Response:', response.data);
+        return response;
+    } catch (error) {
+        console.error('DELETE Error:', error.response.data);
+    }
+}
+
 async function test() {
     // Contoh penggunaan
     const endpoint = 'products';
     const data = { product_name: 'Product A', price: 10.99 };
 
-    // GET
-    var res = await getData(endpoint);
-    console.log(res.data);
-    return;
-
-    // POST
-    var res = await addData(endpoint, data);
-    console.log(res.data);
-
-    // PUT
-    const id = res.data.id; // ID data yang akan diupdate
-    console.log(id);
+    // await deleteAllData(endpoint);
 
     // GET
     await getData(endpoint);
+
+    // POST
+    let addRes = await addData(endpoint, data);
+    console.log(addRes);
+    return;
+
+    // PUT
+    const id = addRes.data.id; // ID data yang akan diupdate
+    console.log(id);
+
+    // GET
+    let res = await getData(endpoint);
 
     // PUT
     const updatedData = { product_name: 'Product A (Updated)', price: 15.99 };
     await updateData(endpoint, id, updatedData);
 
     // GET by ID
-    var res = await getDataById(endpoint, 312);
+    res = await getDataById(endpoint, 312);
 
     // DELETE
     await deleteData(endpoint, id);
