@@ -1,3 +1,10 @@
+/*
+Contoh Dynamic Endpoint di ExpressJS
+- GET/{endpoint}
+- POST/{endpoint}
+- PUT/{endpoint}/{id}
+- DELETE/{endpoint}/{id}
+*/
 const express = require('express');
 const fs = require('fs');
 const path = require('path');

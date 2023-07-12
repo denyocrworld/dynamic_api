@@ -1,9 +1,8 @@
 const axios = require('axios');
 
-async function fetchData(endpoint) {
+async function getData(endpoint) {
     try {
         const response = await axios.get(`http://localhost:3000/api/${endpoint}`);
-        console.log('GET Response:', response.data);
         return response.data;
     } catch (error) {
         console.error('GET Error:', error.response.data);
@@ -44,7 +43,7 @@ async function test() {
     const data = { product_name: 'Product A', price: 10.99 };
 
     // GET
-    await fetchData(endpoint);
+    await getData(endpoint);
 
     // POST
     var res = await addData(endpoint, data);
@@ -55,7 +54,7 @@ async function test() {
     console.log(id);
 
     // GET
-    await fetchData(endpoint);
+    await getData(endpoint);
 
     // PUT
     const updatedData = { product_name: 'Product A (Updated)', price: 15.99 };
