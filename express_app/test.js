@@ -4,6 +4,7 @@ async function fetchData(endpoint) {
     try {
         const response = await axios.get(`http://localhost:3000/api/${endpoint}`);
         console.log('GET Response:', response.data);
+        return response.data;
     } catch (error) {
         console.error('GET Error:', error.response.data);
     }
@@ -13,6 +14,7 @@ async function addData(endpoint, data) {
     try {
         const response = await axios.post(`http://localhost:3000/api/${endpoint}`, data);
         console.log('POST Response:', response.data);
+        return response.data;
     } catch (error) {
         console.error('POST Error:', error.response.data);
     }
@@ -45,10 +47,17 @@ async function test() {
     await fetchData(endpoint);
 
     // POST
-    await addData(endpoint, data);
+    var res = await addData(endpoint, data);
+    console.log(res);
 
     // PUT
-    const id = 1; // ID data yang akan diupdate
+    const id = res.data.id; // ID data yang akan diupdate
+    console.log(id);
+
+    // GET
+    await fetchData(endpoint);
+
+    // PUT
     const updatedData = { product_name: 'Product A (Updated)', price: 15.99 };
     await updateData(endpoint, id, updatedData);
 

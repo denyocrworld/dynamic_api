@@ -49,7 +49,7 @@ app.put('/api/:endpoint/:id', (req, res) => {
   const { body } = req;
   const data = getDataFromJson(endpoint);
   if (data) {
-    const index = data.findIndex(item => item.id === id);
+    const index = data.findIndex(item => item.id == id);
     if (index !== -1) {
       data[index] = { id, ...body };
       saveDataToJson(endpoint, data);
@@ -67,7 +67,7 @@ app.delete('/api/:endpoint/:id', (req, res) => {
   const { endpoint, id } = req.params;
   const data = getDataFromJson(endpoint);
   if (data) {
-    const index = data.findIndex(item => item.id === id);
+    const index = data.findIndex(item => item.id == id);
     if (index !== -1) {
       data.splice(index, 1);
       saveDataToJson(endpoint, data);
