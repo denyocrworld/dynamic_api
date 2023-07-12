@@ -55,7 +55,8 @@ async function test() {
     const data = { product_name: 'Product A', price: 10.99 };
 
     // GET
-    await getData(endpoint);
+    var res = await getData(endpoint);
+    console.log(res.data);
     return;
 
     // POST

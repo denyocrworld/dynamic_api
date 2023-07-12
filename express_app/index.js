@@ -97,11 +97,39 @@ app.delete('/api/:endpoint/:id', (req, res) => {
   }
 });
 
-function getDataFromJson(endpoint) {
+function getDataFromJson(endpoint, page = 1, perPage = 10) {
   try {
     const filePath = getDataFilePath(endpoint);
     const rawData = fs.readFileSync(filePath);
-    return JSON.parse(rawData);
+    const data = JSON.parse(rawData);
+
+    const total = data.length;
+    const startIndex = (page - 1) * perPage;
+    const endIndex = startIndex + perPage;
+    const paginatedData = data.slice(startIndex, endIndex);
+
+    const totalPages = Math.ceil(total / perPage);
+    const currentUrl = `/api/${endpoint}`;
+    const nextPageUrl = page < totalPages ? `${currentUrl}?page=${page + 1}&perPage=${perPage}` : null;
+    const prevPageUrl = page > 1 ? `${currentUrl}?page=${page - 1}&perPage=${perPage}` : null;
+
+    return {
+      data: paginatedData,
+      links: {
+        first: `${currentUrl}?page=1&perPage=${perPage}`,
+        last: `${currentUrl}?page=${totalPages}&perPage=${perPage}`,
+        prev: prevPageUrl,
+        next: nextPageUrl,
+      },
+      meta: {
+        current_page: page,
+        from: startIndex + 1,
+        to: endIndex,
+        per_page: perPage,
+        total: total,
+        last_page: totalPages,
+      },
+    };
   } catch (error) {
     return [];
   }
