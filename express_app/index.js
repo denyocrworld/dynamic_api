@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const app = express();
 const port = 3000;
-const cors = require('cors')
+const cors = require("cors");
 
 app.use(express.json());
 app.use(cors());
@@ -26,6 +26,7 @@ app.get("/api/:endpoint", (req, res) => {
     page < totalPages
       ? `${currentUrl}?page=${page + 1}&perPage=${perPage}`
       : null;
+
   const prevPageUrl =
     page > 1 ? `${currentUrl}?page=${page - 1}&perPage=${perPage}` : null;
 
@@ -34,7 +35,9 @@ app.get("/api/:endpoint", (req, res) => {
       data: paginatedData,
       links: {
         first: `${currentUrl}?page=1&perPage=${perPage}`,
-        last: `${currentUrl}?page=${totalPages}&perPage=${perPage}`,
+        last: `${currentUrl}?page=${
+          totalPages > 0 ? totalPages : 1
+        }&perPage=${perPage}`,
         prev: prevPageUrl,
         next: nextPageUrl,
       },
