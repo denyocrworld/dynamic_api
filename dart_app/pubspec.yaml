@@ -8,6 +8,7 @@ environment:
 
 # Add regular dependencies here.
 dependencies:
+  path: ^1.8.3
   shelf: ^1.4.1
   shelf_cors_headers: ^0.1.5
   shelf_router: ^1.1.4

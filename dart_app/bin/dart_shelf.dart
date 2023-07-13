@@ -10,14 +10,23 @@ void main() {
 
   // GET api/{endpoint}
   app.get('/api/<endpoint>', (Request request, String endpoint) {
-    const page = 1;
-    const perPage = 10;
+    int page =
+        int.tryParse(request.url.queryParameters["page"].toString()) ?? 1;
+    int perPage =
+        int.tryParse(request.url.queryParameters["per_page"].toString()) ?? 10;
+
+    print("page: $page");
+    print(request.url.queryParameters);
 
     final data = getDataFromJson(endpoint);
-    return Response.ok(data);
     final total = data.length;
     final startIndex = (page - 1) * perPage;
-    final endIndex = startIndex + perPage;
+    var endIndex = startIndex + perPage;
+
+    if (data.length < endIndex) {
+      endIndex = data.length;
+    }
+
     final paginatedData =
         data.isEmpty ? [] : data.sublist(startIndex, endIndex);
 
@@ -89,9 +98,9 @@ void main() {
       (Request request, String endpoint, String id) async {
     final body = jsonDecode(await request.readAsString());
     final data = getDataFromJson(endpoint);
-    final index = data.indexWhere((item) => item['id'] == id);
+    final index = data.indexWhere((item) => item['id'] == int.parse(id));
     if (index != -1) {
-      data[index] = {'id': id, ...body};
+      data[index] = {'id': int.parse(id), ...body};
       saveDataToJson(endpoint, data);
       return Response.ok(jsonEncode({'message': 'Data updated successfully'}),
           headers: {'Content-Type': 'application/json'});
@@ -104,7 +113,7 @@ void main() {
   app.delete('/api/<endpoint>/<id>',
       (Request request, String endpoint, String id) {
     final data = getDataFromJson(endpoint);
-    final index = data.indexWhere((item) => item['id'] == id);
+    final index = data.indexWhere((item) => item['id'] == int.parse(id));
     if (index != -1) {
       data.removeAt(index);
       saveDataToJson(endpoint, data);
@@ -134,15 +143,10 @@ void main() {
 List<dynamic> getDataFromJson(String endpoint) {
   try {
     final filePath = getDataFilePath(endpoint);
-    print(filePath);
     final rawData = File(filePath).readAsStringSync();
-    print("---");
-    print(rawData);
-    print("---");
     final data = jsonDecode(rawData);
-    return data ?? [];
+    return data;
   } catch (error) {
-    print(error);
     return [];
   }
 }
