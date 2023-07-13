@@ -111,7 +111,6 @@ app.delete("/api/:endpoint/:id", (req, res) => {
   const data = getDataFromJson(endpoint);
   if (data) {
     const index = data.findIndex((item) => item.id == id);
-    console.log(index);
     if (index !== -1) {
       data.splice(index, 1);
       saveDataToJson(endpoint, data);
