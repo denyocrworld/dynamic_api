@@ -30,44 +30,36 @@ app.get("/api/:endpoint", (req, res) => {
   const prevPageUrl =
     page > 1 ? `${currentUrl}?page=${page - 1}&perPage=${perPage}` : null;
 
-  if (data) {
-    return res.json({
-      data: paginatedData,
-      links: {
-        first: `${currentUrl}?page=1&perPage=${perPage}`,
-        last: `${currentUrl}?page=${
-          totalPages > 0 ? totalPages : 1
-        }&perPage=${perPage}`,
-        prev: prevPageUrl,
-        next: nextPageUrl,
-      },
-      meta: {
-        current_page: page,
-        from: startIndex + 1,
-        to: endIndex,
-        per_page: perPage,
-        total: total,
-        last_page: totalPages,
-      },
-    });
-  } else {
-    res.status(404).json({ error: "Data not found" });
-  }
+  return res.json({
+    data: paginatedData,
+    links: {
+      first: `${currentUrl}?page=1&perPage=${perPage}`,
+      last: `${currentUrl}?page=${
+        totalPages > 0 ? totalPages : 1
+      }&perPage=${perPage}`,
+      prev: prevPageUrl,
+      next: nextPageUrl,
+    },
+    meta: {
+      current_page: page,
+      from: startIndex + 1,
+      to: endIndex,
+      per_page: perPage,
+      total: total,
+      last_page: totalPages,
+    },
+  });
 });
 
 // GET api/{endpoint}/{id}
 app.get("/api/:endpoint/:id", (req, res) => {
   const { endpoint, id } = req.params;
   const data = getDataFromJson(endpoint);
-  if (data) {
-    const item = data.find((item) => item.id == id);
-    if (item) {
-      res.json(item);
-    } else {
-      res.status(404).json({ error: "Data not found" });
-    }
+  const item = data.find((item) => item.id == id);
+  if (item) {
+    res.json(item);
   } else {
-    res.status(404).json({ error: "Endpoint not found" });
+    res.status(404).json({ error: "Data not found" });
   }
 });
 
@@ -76,17 +68,13 @@ app.post("/api/:endpoint", (req, res) => {
   const { endpoint } = req.params;
   const { body } = req;
   const data = getDataFromJson(endpoint);
-  if (data) {
-    const newId = generateId(endpoint);
-    const newData = { id: newId, ...body };
-    data.push(newData);
-    saveDataToJson(endpoint, data);
-    res
-      .status(201)
-      .json({ data: { id: newId }, message: "Data added successfully" });
-  } else {
-    res.status(404).json({ error: "Endpoint not found" });
-  }
+  const newId = generateId(endpoint);
+  const newData = { id: newId, ...body };
+  data.push(newData);
+  saveDataToJson(endpoint, data);
+  res
+    .status(201)
+    .json({ data: { id: newId }, message: "Data added successfully" });
 });
 
 // PUT api/{endpoint}/{id}
@@ -94,17 +82,13 @@ app.put("/api/:endpoint/:id", (req, res) => {
   const { endpoint, id } = req.params;
   const { body } = req;
   const data = getDataFromJson(endpoint);
-  if (data) {
-    const index = data.findIndex((item) => item.id == id);
-    if (index !== -1) {
-      data[index] = { id, ...body };
-      saveDataToJson(endpoint, data);
-      res.json({ message: "Data updated successfully" });
-    } else {
-      res.status(404).json({ error: "Data not found" });
-    }
+  const index = data.findIndex((item) => item.id == id);
+  if (index !== -1) {
+    data[index] = { id, ...body };
+    saveDataToJson(endpoint, data);
+    res.json({ message: "Data updated successfully" });
   } else {
-    res.status(404).json({ error: "Endpoint not found" });
+    res.status(404).json({ error: "Data not found" });
   }
 });
 
@@ -112,17 +96,13 @@ app.put("/api/:endpoint/:id", (req, res) => {
 app.delete("/api/:endpoint/:id", (req, res) => {
   const { endpoint, id } = req.params;
   const data = getDataFromJson(endpoint);
-  if (data) {
-    const index = data.findIndex((item) => item.id == id);
-    if (index !== -1) {
-      data.splice(index, 1);
-      saveDataToJson(endpoint, data);
-      res.json({ message: "Data deleted successfully" });
-    } else {
-      res.status(404).json({ error: "Data not found" });
-    }
+  const index = data.findIndex((item) => item.id == id);
+  if (index !== -1) {
+    data.splice(index, 1);
+    saveDataToJson(endpoint, data);
+    res.json({ message: "Data deleted successfully" });
   } else {
-    res.status(404).json({ error: "Endpoint not found" });
+    res.status(404).json({ error: "Data not found" });
   }
 });
 
@@ -131,12 +111,8 @@ app.delete("/api/:endpoint/action/delete-all", (req, res) => {
   const { endpoint } = req.params;
   const filePath = getDataFilePath(endpoint);
 
-  try {
-    fs.writeFileSync(filePath, "[]");
-    res.json({ message: "All data deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to delete all data" });
-  }
+  fs.writeFileSync(filePath, "[]");
+  res.json({ message: "All data deleted successfully" });
 });
 
 function getDataFromJson(endpoint) {
